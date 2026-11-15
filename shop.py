@@ -4,6 +4,8 @@ It exists only so that its CI can be broken on purpose and the self-healing
 agent can be tried on a repository where nothing valuable can be damaged.
 """
 
+import os
+
 
 def subtotal(prices):
     """Sum of the item prices."""
