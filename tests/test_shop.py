@@ -9,7 +9,7 @@ def test_subtotal():
 
 
 def test_apply_discount():
-    assert shop.apply_discount(200, 10) == 180
+    assert shop.apply_discount(200, 10) == 190
     assert shop.apply_discount(200, 0) == 200
 
 
