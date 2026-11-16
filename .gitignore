@@ -1,3 +1,5 @@
 __pycache__/
 .pytest_cache/
 .ruff_cache/
+# The script that breaks CI must not be in the repository: it is the answer key.
+break_it.py
