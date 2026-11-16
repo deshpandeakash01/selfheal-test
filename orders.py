@@ -19,4 +19,4 @@ def order_total(lines, discount_percent=0, tax_rate=shop.DEFAULT_TAX_RATE):
 
 def free_shipping(lines, threshold=FREE_SHIPPING_FROM):
     """Shipping is free when the lines add up to the threshold or more."""
-    return sum(line_total(p, q) for p, q in lines) > threshold
+    return sum(line_total(p, q) for p, q in lines) >= threshold
