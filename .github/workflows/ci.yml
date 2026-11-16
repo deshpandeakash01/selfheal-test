@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Lint
-        run: ruff check .
+        run: ruff chekc .
 
   test:
     runs-on: ubuntu-latest
