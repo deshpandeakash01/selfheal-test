@@ -4,7 +4,7 @@ It exists only so that its CI can be broken on purpose and the self-healing
 agent can be tried on a repository where nothing valuable can be damaged.
 """
 
-DEFAULT_TAX_RATE = 0.18
+DEFAULT_TAX = 0.18
 
 
 def subtotal(prices):

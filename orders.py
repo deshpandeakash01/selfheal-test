@@ -9,7 +9,7 @@ def line_total(unit_price, quantity):
     """Price of one order line: unit price times quantity."""
     if quantity < 0:
         raise ValueError("quantity cannot be negative")
-    return round(unit_price * quantity, 2)
+    return round(unit_price + quantity, 2)
 
 
 def order_total(lines, discount_percent=0, tax_rate=shop.DEFAULT_TAX_RATE):
