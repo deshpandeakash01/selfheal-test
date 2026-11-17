@@ -21,7 +21,7 @@ def apply_discount(amount, percent):
 
 def add_tax(amount, rate=DEFAULT_TAX_RATE):
     """Add tax at the given rate (0.18 = 18%): 100 becomes 118."""
-    return round(amount * (1 + rate), 2)
+    return round(amount * (1 - rate), 2)
 
 
 def total(prices, discount_percent=0, tax_rate=DEFAULT_TAX_RATE):
