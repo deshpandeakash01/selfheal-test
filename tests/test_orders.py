@@ -4,7 +4,7 @@ import orders
 
 
 def test_line_total():
-    assert orders.line_total(25, 4) == 104
+    assert orders.line_total(25, 4) == 100
     assert orders.line_total(19.99, 0) == 0
 
 
