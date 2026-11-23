@@ -1,5 +1,6 @@
 """Orders: lines of (unit price, quantity), priced with shop.py."""
 
+import json
 import shop
 
 FREE_SHIPPING_FROM = 500
