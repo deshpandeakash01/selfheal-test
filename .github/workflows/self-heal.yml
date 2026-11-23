@@ -4,21 +4,22 @@
 #   .github/workflows/self-heal.yml in the repository to be healed, on its
 #   DEFAULT branch (main). GitHub only reads workflow_run workflows from there.
 #
-# WHAT IT NEEDS (PROJECT_LOG Appendix B, step 9)
-#   - The agent's code in its own repository, made with export_agent_repo.py:
-#       deshpandeakash01/self-healing-agent
-#   - Two secrets in THIS repository (Settings > Secrets and variables > Actions):
-#       SELF_HEAL_TOKEN   fine-grained token with access to BOTH repositories:
-#                         this one: Contents, Pull requests, Actions = Read and write
-#                         self-healing-agent: Contents = Read-only
-#       GOOGLE_API_KEY    the Gemini key
-#     A personal token is used instead of GitHub's built-in one because
-#     changes pushed with the built-in token do not start CI, so the agent
-#     could never check its own fix.
+# WHAT IT NEEDS (README: "Automatic healing")
+#   Two secrets in THIS repository (Settings > Secrets and variables > Actions):
+#     SELF_HEAL_TOKEN   fine-grained token for this repository:
+#                       Contents, Pull requests, Actions = Read and write
+#     GOOGLE_API_KEY    the Gemini key
+#   The agent itself comes from the public Action deshpandeakash01/self-healing-cicd;
+#   nothing else has to be copied or pushed.
 #
 # IT RUNS LIVE
 #   This repository exists to be broken and healed, so the agent writes
-#   (--live). On any other repository, remove --live first and watch dry runs.
+#   (live: true). On any other repository, leave `live` out first and read
+#   the dry-run diagnoses on the run summaries.
+#
+# @main: this test repository always uses the newest agent, so a change to
+#   the agent is live as soon as it is pushed. Other repositories should
+#   use a fixed version, @v1.
 
 name: Self-heal
 
@@ -36,12 +37,8 @@ concurrency:
 
 jobs:
   heal:
-    # Only a FIRST failure:
-    #   - never the agent's own fix branches: it already watches those itself;
-    #   - never a re-run (run_attempt > 1): if the agent re-ran a flaky job and
-    #     it failed again, starting the agent again would loop;
-    #   - never a run from a fork: a stranger's pull request must not be able
-    #     to drive an agent that holds secrets and write access.
+    # Saves starting a runner for nothing. The Action checks these again
+    # (and more: re-runs, the agent's own branches, forks) whatever this says.
     if: >-
       github.event.workflow_run.conclusion == 'failure' &&
       github.event.workflow_run.run_attempt == 1 &&
@@ -50,38 +47,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - name: Get the agent
-        uses: actions/checkout@v4
+      - name: Self-heal
+        uses: deshpandeakash01/self-healing-cicd@main
         with:
-          repository: deshpandeakash01/self-healing-agent
-          token: ${{ secrets.SELF_HEAL_TOKEN }}
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-          cache-dependency-path: requirements-agent.txt
-
-      - name: Install the agent's packages
-        run: pip install -r requirements-agent.txt
-
-      - name: Run the agent
-        env:
-          GITHUB_TOKEN: ${{ secrets.SELF_HEAL_TOKEN }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          SH_MEMORY_TOP_K: "0"
-        run: >-
-          python -m agent.run
-          --repo "${{ github.repository }}"
-          --run-id "${{ github.event.workflow_run.id }}"
-          --live
-          --retry-overloaded 3
-
-      # The runner is thrown away afterwards: keep the run record.
-      - name: Keep the run record
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: self-heal-record-${{ github.event.workflow_run.id }}
-          path: data/agent_runs.jsonl
-          if-no-files-found: ignore
+          github-token: ${{ secrets.SELF_HEAL_TOKEN }}
+          google-api-key: ${{ secrets.GOOGLE_API_KEY }}
+          live: true
