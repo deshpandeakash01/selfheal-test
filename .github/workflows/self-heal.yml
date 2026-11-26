@@ -8,7 +8,10 @@
 #   Two secrets in THIS repository (Settings > Secrets and variables > Actions):
 #     SELF_HEAL_TOKEN   fine-grained token for this repository:
 #                       Contents, Pull requests, Actions = Read and write
-#     GOOGLE_API_KEY    the Gemini key
+#     GOOGLE_API_KEY      the Gemini key            } each key adds that
+#     GROQ_API_KEY        a Groq key (free)         } provider's models to the
+#     OPENROUTER_API_KEY  an OpenRouter key (free)  } model queue; a missing one
+#                                                     is simply skipped
 #   The agent itself comes from the public Action deshpandeakash01/self-healing-cicd;
 #   nothing else has to be copied or pushed.
 #
@@ -52,4 +55,6 @@ jobs:
         with:
           github-token: ${{ secrets.SELF_HEAL_TOKEN }}
           google-api-key: ${{ secrets.GOOGLE_API_KEY }}
+          groq-api-key: ${{ secrets.GROQ_API_KEY }}
+          openrouter-api-key: ${{ secrets.OPENROUTER_API_KEY }}
           live: true
